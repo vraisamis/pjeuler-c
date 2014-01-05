@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+unless (@ARGV) {
+	print "not enough arg.\n";
+	exit 1;
+}
+
+
+my $SRC = "src";
+my $HDR = "hdr";
+
+for (@ARGV) {
+	#create hedder
+	my $U = uc;
+	#print $U;
+	open(HEADER, "> $HDR/$_.h");
+	print HEADER "#ifndef MY_$U\n";
+	print HEADER "#define MY_$U\n";
+	print HEADER "#endif\n";
+	close HEADER;
+	#create source
+	open(SOURCE, "> $SRC/$_.c");
+	print SOURCE qq!#include "../$HDR/$_.h"\n!;
+	close SOURCE;
+}
