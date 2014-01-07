@@ -44,36 +44,72 @@ void deleteDILList(DILList *list) {
 }
 
 DILList *addDILNode(DILList *list, DILNode *node, int index) {
-	DILNode **point;
+	DILNode *p;
 	if (index > list->items) {
 		putErr("Index out of bound.");
 		return NULL;
 	}
-	if (index == DIL_INDEX_LIST) point = &(list->end->next);
-	else for (point = &(list->start); index > 0 && *point != NULL; point = &((*point)->next), index--) ;
-	node->next = (*point)->next;
+	if (index == DIL_INDEX_LAST) p = NULL;
+	else for (p = list->start; index > 0 && p != NULL; p = p->next, index--) ;
+	/* node->next = (*point)->next;
 	node->prev = *point;
 	if ((*point)->next != NULL) (*point)->next->prev = node;
 	else list->end = node;
-	(*point)->next = node;
+	(*point)->next = node; */
+	node->next = p;
+	if (p == NULL) {
+		node->prev = list->end;
+		list->end = p;
+	} else {
+		node->prev = p->prev;
+		p->prev = node;
+	}
+	if (node->prev == NULL) list->start = node;
+	else node->prev->next = node;
+
 	return list;
 }
 
-DILNode *removeDILNode(DILNode **node);
+DILNode *removeDILNode(DILList *list, DILNode *node) {
+	DILNode *tmp = node;
+	if (node->prev == NULL) list->start = node->next;
+	else node->prev->next = node->next;
+	if (node->next == NULL) list->end = node->prev;
+	else node->next->prev = node->prev;
+	return tmp;
+}
 
-DILNode **searchDILNode(DILList *list, int data) {
-	DILNode **point;
-	for (point = &(list->start); *point != NULL && (*point)->data != data; point = &((*point)->next)) ;
+DILNode *searchDILNode(DILList *list, int data) {
+	DILNode *point;
+	for (point = list->start; point != NULL && point->data != data; point = point->next) ;
 	return point;
 }
 
-DILIterator *getDILIterator(DILList *list);
+DILIterator *getDILIterator(DILList *list, boolean isForward) {
+	DILIterator *iterator = (DILIterator *)malloc(sizeof(DILIterator));
+	if (iterator == NULL) {
+		putErr("can't crate DILIterator.");
+	} else {
+		iterator->current = list->start;
+		iterator->target = list;
+		iterator->isForward = isForward;
+	}
+	return iterator;
+}
 
-void deleteDILIterator(DILIterator *iterator);
+void deleteDILIterator(DILIterator *iterator) {
+	free(iterator);
+}
 
-boolean hasNextDILNode(DILIterator *iterator);
+boolean hasNextDILNode(DILIterator *iterator) {
+	return iterator->current == NULL ? FALSE : TRUE;
+}
 
-void nextDILNode(DILIterator *iterator);
+void nextDILNode(DILIterator *iterator) {
+	iterator->current = iterator->isForward ? iterator->current->next : iterator->current->prev;
+}
 
-DILNode *getCurrentDILNode(DILIterator *iterator);
+DILNode *getCurrentDILNode(DILIterator *iterator) {
+	return iterator->current;
+}
 

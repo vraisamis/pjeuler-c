@@ -17,7 +17,7 @@ typedef struct tagDILinkList {
 typedef struct tagDILinkListIterator {
 	DILNode *current;
 	DILList *target;
-	boolean isFront;
+	boolean isForward;
 } DILIterator;
 
 
@@ -32,14 +32,14 @@ DILList *initDILList(DILList *list);
 
 void deleteDILList(DILList *list);
 
-#define DIL_INDEX_LADT -1
+#define DIL_INDEX_LAST -1
 DILList *addDILNode(DILList *list, DILNode *node, int index);
 
-DILNode *removeDILNode(DILNode **node);
+DILNode *removeDILNode(DILList *list, DILNode *node);
 
-DILNode **searchDILNode(DILList *list, int data);
+DILNode *searchDILNode(DILList *list, int data);
 
-DILIterator *getDILIterator(DILList *list);
+DILIterator *getDILIterator(DILList *list, boolean isForward);
 
 void deleteDILIterator(DILIterator *iterator);
 
