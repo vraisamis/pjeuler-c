@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "../hdr/slinklist.h"
 
@@ -43,7 +44,7 @@ void deleteSILList(SILList *list) {
 	free(list);
 }
 
-SILList *addSILNode(SILList *list, SILNode *node, int index) {
+SILList *addSILNodeIndex(SILList *list, SILNode *node, int index) {
 	SILNode **point, *tmp;
 	if (index > list->items) {
 		putErr("Index out of bound.");
@@ -58,6 +59,15 @@ SILList *addSILNode(SILList *list, SILNode *node, int index) {
 	return list;
 }
 
+SILList *addSILNode(SILList *list, SILNode *node, SILNode **pos) {
+	SILNode *tmp;
+	tmp = *pos;
+	*pos = node;
+	node->next = tmp;
+	if (tmp == NULL) list->end = node;
+	return list;
+}
+
 SILNode *removeSILNode(SILNode **node) {
 	SILNode *r = *node;
 	*node = r->next;
@@ -67,6 +77,12 @@ SILNode *removeSILNode(SILNode **node) {
 SILNode **searchSILNode(SILList *list, int data) {
 	SILNode **point;
 	for (point = &(list->start); *point != NULL && (*point)->data != data; point = &((*point)->next)) ;
+	return point;
+}
+
+SILNode **searchSILInsertPos(SILList *list, int data) {
+	SILNode **point;
+	for (point = &(list->start); *point != NULL && (*point)->data < data; point = &((*point)->next)) ;
 	return point;
 }
 
@@ -92,3 +108,7 @@ SILNode *getCurrentSILNode(SILIterator *iterator) {
 	return iterator->current;
 }
 
+void printSILList(SILList *list) {
+	SILIterator *iterator;
+	for (iterator = getSILIterator(list); hasNextSILNode(iterator); nextSILNode(iterator)) printf("%d----", getCurrentSILNode(iterator)->data);
+}

@@ -31,11 +31,15 @@ SILList *initSILList(SILList *list);
 void deleteSILList(SILList *list);
 
 #define SIL_INDEX_LAST -1
-SILList *addSILNode(SILList *list, SILNode *node, int index);
+SILList *addSILNodeIndex(SILList *list, SILNode *node, int index);
+
+SILList *addSILNode(SILList *list, SILNode *node, SILNode **pos);
 
 SILNode *removeSILNode(SILNode **node);
 
 SILNode **searchSILNode(SILList *list, int data);
+
+SILNode **searchSILInsertPos(SILList *list, int data);
 
 SILIterator *getSILIterator(SILList *list);
 
@@ -46,4 +50,6 @@ boolean hasNextSILNode(SILIterator *iterator);
 void nextSILNode(SILIterator *iterator);
 
 SILNode *getCurrentSILNode(SILIterator *iterator);
+
+void printSILList(SILList *list);
 #endif
